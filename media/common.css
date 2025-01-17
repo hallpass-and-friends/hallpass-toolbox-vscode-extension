@@ -1,0 +1,38 @@
+
+.strong { font-weight: bold; }
+.light { color:rgba(255, 255, 255, 0.6); }
+
+.my-4 { margin-top: 1rem; margin-bottom: 1rem; }
+.mx-4 { margin-left: 1rem; margin-right: 1rem; }
+.m-4 { margin: 1rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.px-4 { padding-left: 1rem; padding-right: 1rem; }
+.p-4 { padding: 1rem; }
+
+.flex {
+  display: flex; align-items: center; gap: 1rem;
+  &.gap-1 { gap: 0.25rem; }
+  &.gap-2 { gap: 0.5rem; }
+  &.gap-6 { gap: 1.5rem; }
+  &.gap-8 { gap: 2rem; }
+}
+
+img {
+  height: auto;
+}
+
+h1 { color: white; }
+
+button { 
+  padding: 0.5rem; 
+  background-color: var(--vscode-button-background, rgba(255,255,255,0.5));
+  color: var(--vscode-button-foreground, #ffffff);
+  border: solid 1px var(--vscode-button-border, #cccccc); border-radius: 0.5rem; 
+  cursor: pointer; 
+
+  &:hover {
+    background-color: var(--vscode-button-hoverBackground, rgba(255,255,255, 0.9));
+  }
+}
+pre { margin: 2rem 0; padding: 1rem; border: solid 1px gray; }
+
