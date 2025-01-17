@@ -27,10 +27,31 @@
         }
       }
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "hallpass-toolbox",
+          "title": "Hallpass Toolbox",
+          "icon": "resources/hallpass-toolbox.svg"
+        }
+      ]
+    },
+    "views": {
+      "hallpass-toolbox": [
+        {
+          "id": "hallpass-folders",
+          "name": "Folders"
+        }
+      ]
+    },
     "commands": [
       {
-        "command": "toolbox.helloWorld",
-        "title": "Hallpass Toolbox Hello World"
+        "command": "toolbox.templating",
+        "title": "Hallpass Templating"
+      },
+      {
+        "command": "toolbox.folders",
+        "title": "Hallpass Toolbox Folders"
       }
     ]
   },

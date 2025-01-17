@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { Logger } from './logger';
 import { TemplatingPanel } from './templating/templating-panel.class';
+import { FoldersProvider } from './toolbox-view/folders-provider';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -13,25 +14,23 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	logger.log('Hallpass Toolbox extension is now active!');
 
-
-	//setup the configuration
-	//const config = new Configuration();
 	
 	context.subscriptions.push(
-		vscode.commands.registerCommand('toolbox.helloWorld', () => {				
+		vscode.commands.registerCommand('toolbox.templating', () => {				
 			TemplatingPanel.activate(context.extensionUri);
 		})
 	);
 
-	// if (typeof vscode.window.registerWebviewPanelSerializer === 'function') {
-	// 	vscode.window.registerWebviewPanelSerializer(TemplatingPanel.viewType, {
-	// 		async deserializeWebviewPanel(panel: vscode.WebviewPanel, state: unknown) {
-	// 			logger.log('WebviewPanel State', state);
-	// 			panel.webview.options = getWebviewOptions(context.extensionUri);
-	// 			TemplatingPanel.refresh(panel, context.extensionUri);
-	// 		}
-	// 	});
-	// }
+	context.subscriptions.push(
+		vscode.commands.registerCommand('toolbox.folders', () => {				
+			vscode.window.showWarningMessage("todo: need to implement this command");
+		})
+	);
+
+	context.subscriptions.push(
+		vscode.window.registerTreeDataProvider("hallpass-folders", new FoldersProvider(context))
+	);
+
 }
 
 
