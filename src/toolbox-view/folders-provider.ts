@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
 import { Nullable } from "../common/nullable";
 import { Logger } from "../logger";
+import { FolderDataSource } from "./folders/folder-data-source";
+import { getWorkspaceUri } from "../common/workspace-uri";
 
 const demo = {
   root: {
@@ -11,7 +13,7 @@ const demo = {
     liz: {
       chuck: { preston: null },
       henry: { cory: null, chen: null },
-      bill: null,
+      billy: null,
       katie: null,
     },
     bill: {
@@ -87,14 +89,23 @@ export class FoldersProvider implements vscode.TreeDataProvider<string> {
 
   constructor(context: vscode.ExtensionContext) {
     this.#context = context;
+    const uri = getWorkspaceUri();
+    if (uri) {
+      const x = new FolderDataSource();
+      x.load(uri.fsPath);  
+    }
+    else {
+      this.#logger.log("Could not find workspace uri");
+    }
   }
   getTreeItem(element: string): vscode.TreeItem | Thenable<vscode.TreeItem> {
     this.#logger.log("[FolderProvider] getTreeItem", element);
     if (element) {
-      return Promise.resolve(this._toTreeItem(element));
+      const ret = findNode(element);
+      return Promise.resolve(this._toTreeItem(element, ret && ret.at(1)));
     }
     else {
-      return Promise.resolve(this._toTreeItem(Object.keys(demo).at(0) ?? "unknown"));
+      return Promise.resolve(this._toTreeItem(Object.keys(demo).at(0) ?? "unknown", true));
     }
   }
   getChildren(element?: string | undefined): vscode.ProviderResult<string[]> {
@@ -110,11 +121,12 @@ export class FoldersProvider implements vscode.TreeDataProvider<string> {
   }
   resolveTreeItem?(item: vscode.TreeItem, element: string, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TreeItem> {
     this.#logger.log("[FolderProvider] resolveTreeItem", element);
-    return Promise.resolve(this._toTreeItem(element));
+    const ret = findNode(element);
+    return Promise.resolve(this._toTreeItem(element, ret && ret.at(1)));
   }
 
-  private _toTreeItem(key: string): vscode.TreeItem {
-    const ret = new vscode.TreeItem(key, vscode.TreeItemCollapsibleState.Collapsed);
+  private _toTreeItem(key: string, children: boolean): vscode.TreeItem {
+    const ret = new vscode.TreeItem(key, children ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
     ret.description = "this is the description";
     ret.tooltip = "this is the tooltip";
     return ret;
