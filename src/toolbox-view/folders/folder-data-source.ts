@@ -22,16 +22,13 @@ export class FolderDataSource {
     const folders: FolderItem[] = fs.readdirSync(source, { recursive: true, withFileTypes: true })
       .filter(ent => ent.isDirectory())
       .map(ent => {
-        const parent = ent.parentPath.replace(source, '') || path.delimiter;
-        return {
-          name: ent.name,
-          parent
-        };
+        const parent = ent.parentPath.replace(source, '') || '';
+        return FolderTree.createFolderItem(ent.name, parent);
       });
     folders.forEach(f => {
       this.#logger.log("adding child...", f.parent, f.name);
       this.#tree.display();
-      this.#tree.addChild(f.parent, f);
+      this.#tree.addChild(, f);
     });
 
     this.#logger.log("FolderDataSource", source);
