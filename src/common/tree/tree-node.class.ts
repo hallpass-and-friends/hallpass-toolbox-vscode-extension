@@ -1,6 +1,9 @@
+import { Nullable } from "../nullable";
+
 export class TreeNode<T> {
   id: string;
   value!: T;
+  parent: Nullable<TreeNode<T>>;
   readonly children: TreeNode<T>[] = [];
   get isLeaf() { return this.children.length === 0; }
 

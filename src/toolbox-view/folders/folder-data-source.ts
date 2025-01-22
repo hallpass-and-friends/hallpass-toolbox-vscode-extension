@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 import { Nullable } from "../../common/nullable";
 import { FolderItem } from "./folder-item.type";
 import { Logger } from '../../logger';
@@ -17,22 +18,26 @@ export class FolderDataSource {
 
   //#region >>> Build the Folder Tree <<<
 
-  load(path: string) {
-    const folders: FolderItem[] = fs.readdirSync(path, { recursive: true, withFileTypes: true })
+  load(source: string) {
+    const folders: FolderItem[] = fs.readdirSync(source, { recursive: true, withFileTypes: true })
       .filter(ent => ent.isDirectory())
       .map(ent => {
-        const parent = ent.parentPath.replace(path, '');
+        const parent = ent.parentPath.replace(source, '') || path.delimiter;
         return {
           name: ent.name,
           parent
-        }
+        };
       });
-    folders.forEach(f => this.#tree.addChild(f.parent, f));
+    folders.forEach(f => {
+      this.#logger.log("adding child...", f.parent, f.name);
+      this.#tree.display();
+      this.#tree.addChild(f.parent, f);
+    });
 
-    this.#logger.log("FolderDataSource", path);
+    this.#logger.log("FolderDataSource", source);
     const display = (node: TreeNode<FolderItem>) => {
       this.#logger.log(`[${node.value.name}]`, node.id);
-    }
+    };
 
     return true;
   }
