@@ -99,11 +99,34 @@ export class TemplatingPanel {
           <span>Hallpass Templating</span>
         </h1>
 
-        <h3>Select Template</h3>
-        <div class="select-list" id="templates"></div>
-        
-        <div class="my-4">
-          <button type="button">Done</button>
+        <section>
+          <h3>Select Template</h3>
+          <div class="select-list" id="templates"></div>
+        </section>
+
+        <section>
+          <h3>Configuration</h3>
+          <div class="configuration" id="configuration">
+            <em>please select a template</em>
+          </div>
+        </section>
+
+        <section>
+          <h3>Output Folder</h3>
+          <div class="field-group">
+            <div class="field">
+              <label forHtml="target">Relative Folder</label>
+              <input type="text" placeholder="e.g. ./src/app/views" id="target" name="target" />
+              <span class="hint">This is the folder within your project where the template files will be built</span>
+            </div>
+          </div>
+        </section>
+
+
+        <hr />
+
+        <div class="my-8">
+          <button type="button" id="process" disabled>Process Template</button>
         </div>
 
 				<script nonce="${nonce}" src="${commonJs}"></script>
@@ -137,6 +160,7 @@ export class TemplatingPanel {
         const template = message.data;
         if (template) {
           this._manager.currentTemplate = template;
+          this._panel.webview.postMessage({ command: "template-selected", data: template });
         }        
         break;
       

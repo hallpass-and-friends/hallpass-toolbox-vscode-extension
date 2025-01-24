@@ -1,3 +1,4 @@
+
 function renderTargetItem(parent, item) {
   const el = addChild(parent, 'div', null, 'item');
   addChild(el, 'div', item.label, 'strong');
@@ -29,6 +30,11 @@ function loadTemplates(items) {
   });
 }
 
+
+function selectTemplate(template) {
+  console.log(">>> todo: select template", template);
+}
+
 // on load
 document.addEventListener('DOMContentLoaded', () => {
   loadTemplates();
@@ -40,6 +46,9 @@ window.addEventListener('message', (evt) => {
   switch (message.command) {
     case 'templates': 
       loadTemplates(message.data);
+      break;
+    case 'template-selected':
+      selectTemplate(message.data);
       break;
     default: 
       console.warn(`Unsupported message from the extension: ${message.command}`);
