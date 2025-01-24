@@ -1,134 +1,92 @@
 import * as vscode from "vscode";
-import { Nullable } from "../common/nullable";
+import { isNullish, Nullable } from "../common/nullable";
 import { Logger } from "../logger";
-import { FolderDataSource } from "./folders/folder-data-source";
+import { FolderDataSource, FolderTreeItem } from "./folders/folder-data-source";
 import { getWorkspaceUri } from "../common/workspace-uri";
 
-const demo = {
-  root: {
-    bob: {
-      win: { tyler: null, jackie: { latte: null }},
-      rob: { ruby: { chester: null }, chapin: null }
-    },
-    liz: {
-      chuck: { preston: null },
-      henry: { cory: null, chen: null },
-      billy: null,
-      katie: null,
-    },
-    bill: {
-      shelly: { kat: { katBoy: null, katGirl: null }, will: null },
-      john: { alex: null, max: null },
-      joe: { melissa: { melBoy1: null, melGirl1: null, melGirl2: null }},
-      ned: null,
-      ellen: { aaron: null }
-    }
-  }
-};
-
-type KeyObject = [string, any];
-
-function getRoot(): KeyObject {
-  return ["root", demo.root];
-}
-function findNode(key: string): Nullable<KeyObject> {
-  
-  function _find(obj: any): Nullable<KeyObject> {
-    if (!obj) {
-      return null;
-    }
-
-    const keys = Object.keys(obj);
-    if (keys.includes(key)) {
-      return [key, obj[key]];
-    }
-    //else
-    return keys.reduce((ret: Nullable<KeyObject>, curr) => {
-      if (obj[curr]) {
-        return ret ?? _find(obj[curr]);
-      }
-      else {
-        return ret;
-      }
-    }, null);
-  }
-  
-  return _find(demo);
-}
-
-function findParentNode(key: string): Nullable<KeyObject> {
-  
-  function _find([parent, obj]: KeyObject): Nullable<KeyObject> {
-    if (!obj) {
-      return null;
-    }
-
-    const keys = Object.keys(obj);
-    if (keys.includes(key)) {
-      return [parent, obj];
-    }
-    //else
-    return keys.reduce((ret: Nullable<KeyObject>, curr) => {
-      if (obj[curr]) {
-        return _find([curr, obj[curr]]);
-      }
-      else {
-        return ret;
-      }
-    }, null);
-  }
-  
-  return _find(['', demo]);
-}
-
-export class FoldersProvider implements vscode.TreeDataProvider<string> {
+export class FoldersProvider implements vscode.TreeDataProvider<FolderTreeItem> {
   #logger = new Logger();
   #context: vscode.ExtensionContext;
-  private _onDidChangeTreeData = new vscode.EventEmitter<Nullable<string>>();  
-  readonly onDidChangeTreeData: vscode.Event<Nullable<string>> = this._onDidChangeTreeData.event;
+  #data: FolderDataSource;
+  private _onDidChangeTreeData = new vscode.EventEmitter<Nullable<FolderTreeItem>>();  
+  readonly onDidChangeTreeData: vscode.Event<Nullable<FolderTreeItem>> = this._onDidChangeTreeData.event;
+
+  get size() { return this.#data.tree.size; }
+  get depth() { return this.#data.tree.depth; }
 
   constructor(context: vscode.ExtensionContext) {
     this.#context = context;
+    this.#data = new FolderDataSource();
+    this.refresh();
+  }
+
+  refresh() {
     const uri = getWorkspaceUri();
     if (uri) {
-      const x = new FolderDataSource();
-      x.load(uri.fsPath);  
+      this.#data.load(uri.fsPath);  
+      this._onDidChangeTreeData.fire(undefined);
     }
     else {
       this.#logger.log("Could not find workspace uri");
     }
   }
-  getTreeItem(element: string): vscode.TreeItem | Thenable<vscode.TreeItem> {
-    this.#logger.log("[FolderProvider] getTreeItem", element);
+
+  copyPath(element?: Nullable<FolderTreeItem>) {
+    return new Promise<string | false>((resolve, reject) => {
+      try {
+        if (isNullish(element)) {
+          resolve(false); // nothing to copy
+        } 
+        else {
+          const target = this.#data.relativePath(element.value);
+          vscode.env.clipboard.writeText(target)
+            .then(
+              () => {
+                this.#logger.log("[FoldersProvider] Copied to clipboard:", target);
+                resolve(target);
+              },
+              (reason) => {
+                reject(reason);
+              }
+            );
+        }
+      } catch (error) {
+        reject(error);
+      }
+    });
+  }
+
+  getTreeItem(element: FolderTreeItem): vscode.TreeItem | Thenable<vscode.TreeItem> {
+    this.#logger.log("[FolderProvider] getTreeItem", this._format(element));    
     if (element) {
-      const ret = findNode(element);
-      return Promise.resolve(this._toTreeItem(element, ret && ret.at(1)));
+      return Promise.resolve(this._toTreeItem(element));
     }
     else {
-      return Promise.resolve(this._toTreeItem(Object.keys(demo).at(0) ?? "unknown", true));
+      return Promise.resolve(this._toTreeItem(this.#data.tree.getRoot()));
     }
   }
-  getChildren(element?: string | undefined): vscode.ProviderResult<string[]> {
-    this.#logger.log("[FolderProvider] getChildren", element);
-    const ret = findNode(element ?? "root");
-    return Promise.resolve(ret ? Object.keys(ret.at(1)) : null);
+  getChildren(element?: FolderTreeItem | undefined): vscode.ProviderResult<FolderTreeItem[]> {
+    this.#logger.log("[FolderProvider] getChildren", isNullish(element) ? '-root-' : this._format(element));
+    return (element ?? this.#data.tree.getRoot()).children;    
   }
 
-  getParent?(element: string): vscode.ProviderResult<string> {
-    this.#logger.log("[FolderProvider] getParent", element);
-    const ret = findParentNode(element);
-    return Promise.resolve(ret ? ret.at(0) : 'unknown');
+  getParent?(element: FolderTreeItem): vscode.ProviderResult<FolderTreeItem> {
+    this.#logger.log("[FolderProvider] getParent", this._format(element));
+    return element.parent;
   }
-  resolveTreeItem?(item: vscode.TreeItem, element: string, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TreeItem> {
-    this.#logger.log("[FolderProvider] resolveTreeItem", element);
-    const ret = findNode(element);
-    return Promise.resolve(this._toTreeItem(element, ret && ret.at(1)));
+  resolveTreeItem?(item: vscode.TreeItem, element: FolderTreeItem, token: vscode.CancellationToken): vscode.ProviderResult<vscode.TreeItem> {
+    this.#logger.log("[FolderProvider] resolveTreeItem", this._format(element));
+    return this._toTreeItem(element);
   }
 
-  private _toTreeItem(key: string, children: boolean): vscode.TreeItem {
-    const ret = new vscode.TreeItem(key, children ? vscode.TreeItemCollapsibleState.Collapsed : vscode.TreeItemCollapsibleState.None);
-    ret.description = "this is the description";
-    ret.tooltip = "this is the tooltip";
+  private _format(element: FolderTreeItem): string {
+    return `${element.value.parent}[${element.value.name}]`;
+  }
+
+  private _toTreeItem(node: FolderTreeItem): vscode.TreeItem {
+    const ret = new vscode.TreeItem(node.value.name, node.isLeaf ? vscode.TreeItemCollapsibleState.None : vscode.TreeItemCollapsibleState.Collapsed);
+    ret.id = node.id;
+    ret.tooltip = this.#data.fullPath(node.value);
     return ret;
   }
 

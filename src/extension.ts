@@ -14,6 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
 	// This line of code will only be executed once when your extension is activated
 	logger.log('Hallpass Toolbox extension is now active!');
 
+	const foldersProvider = new FoldersProvider(context);
 	
 	context.subscriptions.push(
 		vscode.commands.registerCommand('toolbox.templating', () => {				
@@ -22,13 +23,34 @@ export function activate(context: vscode.ExtensionContext) {
 	);
 
 	context.subscriptions.push(
-		vscode.commands.registerCommand('toolbox.folders', () => {				
-			vscode.window.showWarningMessage("todo: need to implement this command");
+		vscode.commands.registerCommand('hallpassFolders.refresh-folders', () => {
+			foldersProvider.refresh();							
+			vscode.window.showInformationMessage(`Folders refreshed.  Total of ${foldersProvider.size} folders, with a depth of ${foldersProvider.depth} levels.`);
+		})
+	);
+	context.subscriptions.push(
+		vscode.commands.registerCommand('hallpassFolders.copy-path', (target: any) => {
+			foldersProvider.copyPath(target)
+				.then(
+					(result) => {
+						if (result) {
+							vscode.window.showInformationMessage(`Path Copied to Clipboard: ${result}`);
+						}
+						else {
+							vscode.window.showWarningMessage(`Unable to copy path to clipboard.`);
+						}
+					}
+				)
+				.catch(
+					(reason) => {
+						vscode.window.showErrorMessage(`Error copying path to clipboard`);
+					}
+				);
 		})
 	);
 
 	context.subscriptions.push(
-		vscode.window.registerTreeDataProvider("hallpass-folders", new FoldersProvider(context))
+		vscode.window.registerTreeDataProvider("hallpassFolders", foldersProvider)
 	);
 
 }

@@ -17,4 +17,14 @@ export class TreeNode<T> {
       || this.children.some(t => t.has(id));
   }
 
+  toJSON() {
+    const obj = {
+      id: this.id,
+      value: this.value,
+      parent: this.parent?.id ?? null,
+      children: this.children.map(m => m.id),
+      isLeaf: this.isLeaf
+    };
+    return JSON.stringify(obj);
+  }
 }

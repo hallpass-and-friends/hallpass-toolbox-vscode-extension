@@ -39,21 +39,50 @@
     "views": {
       "hallpass-toolbox": [
         {
-          "id": "hallpass-folders",
-          "name": "Folders"
+          "id": "hallpass-welcome",
+          "name": "Welcome",
+          "icon": "resources/welcome.svg"
+        },
+        {
+          "id": "hallpassFolders",
+          "name": "Folders",
+          "icon": "resources/folder.svg"
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "hallpass-welcome",
+        "contents": "Welcome to Hallpass Toolbox. [learn more](https://client.hallpassandfriends.com/)\n[Open Templating](command:toolbox.templating)\n[Refresh Folders](command:hallpassFolders.refresh-folders)"
+      }
+    ],
     "commands": [
       {
         "command": "toolbox.templating",
         "title": "Hallpass Templating"
       },
       {
-        "command": "toolbox.folders",
-        "title": "Hallpass Toolbox Folders"
+        "command": "hallpassFolders.refresh-folders",
+        "title": "Refresh Hallpass Toolbox Folders"
+      },
+      {
+        "command": "hallpassFolders.copy-path",
+        "title": "Copy",
+        "icon": {
+          "light": "resources/copy-light.svg",
+          "dark": "resources/copy-dark.svg"
+        }
       }
-    ]
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "hallpassFolders.copy-path",
+          "when": "view === hallpassFolders",
+          "group": "inline"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

@@ -5,29 +5,21 @@ import { FolderItem } from "./folder-item.type";
 import path from 'path';
 
 export class FolderTree extends Tree<FolderItem> {
-  protected readonly ID_DELIM = '|';
   constructor() {
     super();
     this._toIdConverter = (value: FolderItem) => {
-      return [
-        ...value.parent,
-        value.name
-      ].join(this.ID_DELIM);
+      return path.join(value.parent, value.name).trim();
     };
     this.valueToString = (value: FolderItem) => {
-      return `{name: ${value.name}, parent: ${value.parent.join(this.ID_DELIM)}}`;
+      return `{name: ${value.name}, parent: ${value.parent}}`;
     };
-    new Logger().log("Setting root", path.delimiter);
     this.setRoot(FolderTree.createFolderItem('',''));
   }
 
-  static parse
-
   static createFolderItem(name: string, parent: string): FolderItem {
-    parent = parent.replaceAll('\\','/');
     return {
       name,
-      parent: parent.split('/').map(p => p.trim()).filter(Boolean)
+      parent
     };
   }
 }
