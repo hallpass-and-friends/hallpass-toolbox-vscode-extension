@@ -1,14 +1,14 @@
 import * as vscode from 'vscode';
-import * as fsPath from 'path';
 
 import { Configuration, TemplatingConfig } from '../configuration';
 import { isNullish, Nullable } from '../common/nullable';
 import { TemplateItem } from "./template-item.type";
-import { readTextFile } from '../common/read-text-file';
+import { readTextFile, readTextFileFS } from '../common/read-text-file';
 import { Logger } from '../logger';
 import { directoryListingDeep, DirectoryListingItem } from '../common/directory-listing';
 import { makeDirectory } from '../common/make-directory';
 import { copyFileWithBackup } from '../common/copy-and-rename-file';
+import { writeTextFileFS } from '../common/write-text-file';
 
 export type TemplatingData = {  
   templates: TemplateItem[];
@@ -147,11 +147,53 @@ export class TemplatingManager {
         case vscode.FileType.File: {
           const result = copyFileWithBackup(_source, _target);
           this.#logger.log(`  - FILE ${result ? 'OK' : 'IGNORED'} (${_target})`);
+          this.customizeFile(_target, fields);
           break;
         }
         default:
           this.#logger.log(`  - ignoring (${f.name})`);
       }
     });
+  }
+
+  protected customizeFile(filePath: string, fields: any) {
+    try {
+      //read file
+      const original = readTextFileFS(filePath);
+      let content = original;
+
+      //substitute fields values for placeholders
+      const substitute = (content: string, id: string, value: string) => {
+        const replacements = [
+          { search: `{${id}}`, replace: value }, //normal
+          { search: `{${id.toLocaleLowerCase()}}`, replace: value.toLocaleLowerCase() }, //lowercase
+          { search: `{${id.toLocaleUpperCase()}}`, replace: value.toLocaleUpperCase() }, //uppercase
+        ];
+        replacements.forEach(m => {
+          if (content.includes(m.search)) {
+            content = content.replaceAll(m.search, m.replace);
+          }
+        });
+        return content;
+      };
+      
+      Object.keys(fields).forEach((id) => {
+        const {field, value} = fields[id];
+        if (field.id === id) {
+          content = substitute(content, id, value);
+        }
+      });
+
+      if (content !== original) {
+        //changes were made, so save file
+        writeTextFileFS(content, filePath);
+      }
+
+    } catch (error) {
+      const message = ('message' in (error as any))
+        ? (error as any).message 
+        : `${error}`;
+      this.#logger.error(`[TemplatingManager] customizeFile() - error - ${message}`);
+    }
   }
 }

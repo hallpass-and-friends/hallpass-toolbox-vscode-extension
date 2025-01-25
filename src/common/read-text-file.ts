@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import fs from 'fs';
 
 export function readTextFile(extensionUri: vscode.Uri, ...path: string[]) {
   const uri = vscode.Uri.joinPath(extensionUri, ...path);
@@ -17,4 +18,9 @@ export function readTextFile(extensionUri: vscode.Uri, ...path: string[]) {
         }
       );
   });
+}
+
+export function readTextFileFS(path: string) {
+  const result = fs.readFileSync(path);
+  return new TextDecoder().decode(result);
 }
