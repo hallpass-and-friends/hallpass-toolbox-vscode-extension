@@ -1,7 +1,7 @@
 {
-  "name": "toolbox",
-  "displayName": "Toolbox",
-  "description": "Learning VS Extensions",
+  "name": "hallpass-toolbox",
+  "displayName": "Hallpass Toolbox",
+  "description": "Development Toolbox used by Hallpass and Friends",
   "version": "0.1.0",
   "engines": {
     "vscode": "^1.96.0"
@@ -9,6 +9,11 @@
   "categories": [
     "Other"
   ],
+  "publisher": "Hallpass and Friends",
+  "license": "BSD-3-Clause",
+  "sponsor": {
+    "url": "https://buymeacoffee.com/hallpassandfriends"
+  }, 
   "icon": "resources/hallpass-toolbox.128.color.png",
   "activationEvents": [],
   "main": "./out/extension.js",
