@@ -49,9 +49,12 @@ function updatePanelState(override) {
   }
   if (!main.target) {
     main.target = document.getElementById('target');
-    main.target.addEventListener('keyup', () => main.update());
+    main.target.addEventListener('keyup', debounce(
+      () => main.update()
+    ), 600);
   }
 
+  const previousState = main.valid;
   const output = [];
   if (!main.template) { output.push('[Template] Please select template'); }
   if (output.length === 0) {
@@ -72,7 +75,9 @@ function updatePanelState(override) {
     main.processBtn.disabled = !main.valid;
   }
 
-  displayOutput(output.length === 0 ? 'Ready' : 'Todo', output);
+  if (!main.valid || main.valid !== previousState) {
+    displayOutput(output.length === 0 ? 'Ready' : 'Todo', output);
+  }
   return main.valid;
 }
 
@@ -153,10 +158,11 @@ function buildField(field) {
 
   //add subscription
   main.configuration.subscriptions.push(
-    addListener(input, 'keyup', () => { 
-      main.configuration.fields[field.id].value = input.value; 
-      main.update();
-    })
+    addListener(input, 'keyup', debounce(() => { 
+        main.configuration.fields[field.id].value = input.value; 
+        main.update();
+      }, 600)
+    )
   );
 
   return ret;

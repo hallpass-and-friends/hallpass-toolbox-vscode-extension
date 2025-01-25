@@ -29,3 +29,16 @@ function addListener(element, event, action) {
   element.addEventListener(event, action);
   return () => { element.removeEventListener(event, action); };
 }
+
+
+function debounce(
+    callback, /* the function to trigger */
+    ms,       /* milliseconds delay before triggering callback defaults to 0 - no delay */
+    context   /* defaults to this */) {
+  let timer = 0;
+  return function(...args) {
+    context ??= this;       //the context for the function
+    clearTimeout(timer);    //reset the delay
+    timer = setTimeout(callback.bind(context, ...args), ms ?? 0);
+  };
+}
