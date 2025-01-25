@@ -1,57 +1,44 @@
-# toolbox README
+# Hallpass Toolbox
 
-This is the README for your extension "toolbox". After writing up a brief description, we recommend including the following sections.
+**Toolbox by Hallpass** is a set of utilities developed and maintained by [Hallpass and Friends](https://academy.hallpassandfriends.com).  We built this set of tools to enhance our development environment.
+
+
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+### Templating
 
-For example if there is an image subfolder under your extension project workspace:
+The Templating tool allows you to easily create a set of templates to "scaffold" your development.
 
-\!\[feature X\]\(images/feature-x.png\)
+A template a set of files, and optionally a set of customization fields. For example, 
+if you are building a web project, you might want to create a template for a new page that consists of HTML, CSS and JS files.
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+We use the Templating tool to scaffold new "pages" in our NextJS projects and "views" in our Angular projects. 
 
-## Requirements
+### Others??
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+If you have an idea for an addition to the Toolbox, please let us know by [submitting a feature request issue](https://github.com/hallpass-and-friends/hallpass-toolbox-vscode-extension/issues).
 
-## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
+## Settings
 
 This extension contributes the following settings:
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+**Templating**
+
+* `hallpassToolbox.templating.basePath`: Location of the templates and configuration files. Defaults to `.vscode/hallpass/templating`.
+* `hallpassToolbox.templating.config`: Name of the json file containing the configuration. Defaults to `config.json`
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+*January 25, 2025* - no known issues
+
+You can 
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+### 0.1.0
 
-### 1.0.0
+Initial (beta) release
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
 
