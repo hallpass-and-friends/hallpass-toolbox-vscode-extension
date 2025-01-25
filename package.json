@@ -14,6 +14,10 @@
   "sponsor": {
     "url": "https://buymeacoffee.com/hallpassandfriends"
   }, 
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hallpass-and-friends/hallpass-toolbox-vscode-extension"
+  },
   "icon": "resources/hallpass-toolbox.128.color.png",
   "activationEvents": [],
   "main": "./out/extension.js",
