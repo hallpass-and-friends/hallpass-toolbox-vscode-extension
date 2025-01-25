@@ -2,9 +2,9 @@ import * as vscode from 'vscode';
 import { isNullish, Nullable } from './../common/nullable';
 import { getWebviewOptions } from '../common/webview-options';
 import { getNonce } from '../common/nonce';
-import { TemplateItem } from './template-item.type';
 import { TemplatingManager } from './templating-manager.class';
 import { getWorkspaceUri } from '../common/workspace-uri';
+import { Logger } from '../logger';
 
 export class TemplatingPanel {
 
@@ -39,6 +39,7 @@ export class TemplatingPanel {
   }
 
   //#region Instance Properties and Methods
+  private readonly _logger = new Logger();
   private readonly _panel!: vscode.WebviewPanel;
   private readonly _extensionUri!: vscode.Uri;
   private readonly _manager!: TemplatingManager;
@@ -55,8 +56,6 @@ export class TemplatingPanel {
     this._panel.onDidDispose(() => this.dispose()); 
     this._panel.webview.onDidReceiveMessage(message => this._handleMessageFromPanel(message));
   }
-
-
 
   private _buildPanelContent() {
     const view = this._panel.webview;
@@ -137,6 +136,19 @@ export class TemplatingPanel {
 
   private _handleMessageFromPanel(message: any) {
     switch (message.command) {
+      case 'log': {
+        const {title = 'Log', content = []} = message;
+        const output: string[] = Array.isArray(content)
+          ? content
+          : [content];
+
+        const frontmatter = `[Templating] ${title}`;
+        this._logger.log(`${frontmatter} ${output.length > 0 ? '...' : ''}`);
+        output.forEach(line => {
+          this._logger.log(`  - ${line}`);
+        });
+        break;
+      }
       case 'message':
       case 'info':
         vscode.window.showInformationMessage(message.text ?? `Unknown message sent to ${TemplatingPanel.viewType}`);
@@ -150,20 +162,28 @@ export class TemplatingPanel {
         vscode.window.showErrorMessage(message.text ?? `Unknown error message sent to ${TemplatingPanel.viewType}`);
         break;
 
-      case 'get-templates':
+      case 'get-templates':{
         const templates = this._manager.getTemplates();
         if (templates) {
           this._panel.webview.postMessage({ command: "templates", data: templates });
         }        
         break;
-      case 'set-template':
+      }
+      case 'set-template': {
         const template = message.data;
         if (template) {
           this._manager.currentTemplate = template;
           this._panel.webview.postMessage({ command: "template-selected", data: template });
         }        
         break;
-      
+      }
+      case 'process-template': {
+        const {template, fields, target} = message;
+        this._manager.processTemplate(template, fields, target);
+        break;
+      }
+
+
       //todo: handle other messages
 
       default:

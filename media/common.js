@@ -24,3 +24,8 @@ function addChild(parent, tag, html, classNames) {
   parent.appendChild(el);
   return el;
 }
+
+function addListener(element, event, action) {
+  element.addEventListener(event, action);
+  return () => { element.removeEventListener(event, action); };
+}

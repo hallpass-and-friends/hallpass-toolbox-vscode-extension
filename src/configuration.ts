@@ -41,6 +41,6 @@ export class Configuration {
       config: config.get('templating.config') ?? 'config.json',
     };
 
-    this.#logger.log(`Templating: basePath - ${this.templating.basePath}, config - ${this.templating.config}`);
+    this.#logger.log(`[Templating] basePath - ${this.templating.basePath}, config - ${this.templating.config}`);
   }
 }

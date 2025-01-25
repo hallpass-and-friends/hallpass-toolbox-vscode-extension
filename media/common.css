@@ -1,6 +1,36 @@
+.vscode-dark {
+  --hallpass-color-bright: #ffffff;  
+  --hallpass-color-light: rgba(255, 255, 255, 0.6);  
+  --hallpass-color-accent: #6fb2fd;
+
+  --hallpass-bg-minimal: rgba(255, 255, 255, 0.05);
+  --hallpass-bg-light: rgba(255, 255, 255, 0.2);
+  --hallpass-bg-regular: rgba(255, 255, 255, 0.5);
+  --hallpass-bg-active: rgba(119, 167, 226, 0.1);
+
+  --hallpass-border-minimal: rgba(255, 255, 255, 0.05);
+  --hallpass-border-light: rgba(255, 255, 255, 0.1);
+  --hallpass-border-regular: rgba(255, 255, 255, 0.5);
+  --hallpass-border-active: rgb(119, 167, 226);
+}
+.vscode-light {
+  --hallpass-color-bright: #000000;  
+  --hallpass-color-light: rgba(0, 0, 0, 0.6);  
+  --hallpass-color-accent: #6fb2fd;
+  
+  --hallpass-bg-minimal: rgba(0, 0, 0, 0.01);
+  --hallpass-bg-light: rgba(0, 0, 0, 0.05);
+  --hallpass-bg-regular: rgba(0, 0, 0, 0.1);
+  --hallpass-bg-active: rgba(68, 80, 94, 0.1);
+
+  --hallpass-border-minimal: rgba(0, 0, 0, 0.05);
+  --hallpass-border-light: rgba(0, 0, 0, 0.1);
+  --hallpass-border-regular: rgba(0, 0, 0, 0.5);
+  --hallpass-border-active: rgb(68, 80, 94);
+}
 
 .strong { font-weight: bold; }
-.light { color:rgba(255, 255, 255, 0.6); }
+.light { color:var(--hallpass-color-light); }
 
 .my-8 { margin-top: 2rem; margin-bottom: 2rem; }
 .my-4 { margin-top: 1rem; margin-bottom: 1rem; }
@@ -27,7 +57,7 @@ img {
   height: auto;
 }
 
-h1 { color: white; }
+h1 { color: var(--hallpass-color-bright); }
 
 section {
   margin-bottom: 2rem;
@@ -35,13 +65,13 @@ section {
 
 button { 
   padding: 0.5rem; 
-  background-color: var(--vscode-button-background, rgba(255,255,255,0.5));
-  color: var(--vscode-button-foreground, #ffffff);
-  border: solid 1px var(--vscode-button-border, #cccccc); border-radius: 0.5rem; 
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: solid 1px var(--vscode-button-border); border-radius: 0.5rem; 
   cursor: pointer; 
 
   &:hover {
-    background-color: var(--vscode-button-hoverBackground, rgba(255,255,255, 0.9));
+    background-color: var(--vscode-button-hoverBackground);
   }
   &:disabled {
     opacity: 0.5;
