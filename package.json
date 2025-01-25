@@ -15,15 +15,15 @@
     "configuration": {
       "title": "Hallpass Toolbox",
       "properties": {
-        "hallpassToolbox.greeting.phrase": {
+        "hallpassToolbox.templating.basePath": {
           "type": "string",
-          "default": "Hello",
-          "description": "The phrase used when greeting the user."
+          "default": ".vscode/hallpass/templating",
+          "description": "Location of the templates and configuration file."
         },
-        "hallpassToolbox.greeting.useExclamation": {
-          "type": "boolean",
-          "default": false,
-          "description": "Use an exclamation point when displaying a greeting"
+        "hallpassToolbox.templating.config": {
+          "type": "string",
+          "default": "config.json",
+          "description": "Name of the json file containing the configuration."
         }
       }
     },

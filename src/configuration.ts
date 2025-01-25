@@ -1,11 +1,6 @@
 import * as vscode from 'vscode';
 import { Logger } from './logger';
 
-export type GreetingConfig = {
-  phrase: string;
-  useExclamation: boolean;
-}
-
 export type TemplatingConfig = {
   basePath: string;
   config: string;  
@@ -13,11 +8,6 @@ export type TemplatingConfig = {
 
 export class Configuration {
   #logger!: Logger;
-
-  #greeting!: GreetingConfig;  
-  get greeting() {
-    return {...this.#greeting}; //shallow clone
-  }
 
   #templating!: TemplatingConfig;
   get templating() {
@@ -32,10 +22,6 @@ export class Configuration {
   refresh() {
     this.#logger.log("Loading the Hallpass Toolbox Configuration");
     const config = vscode.workspace.getConfiguration("hallpassToolbox");
-    this.#greeting = {
-      phrase: config.get('greeting.phrase') ?? 'unknown',
-      useExclamation: config.get('greeting.useExclamation') ?? false
-    };
     this.#templating = {
       basePath: config.get('templating.basePath') ?? '.vscode/hallpass/templating',
       config: config.get('templating.config') ?? 'config.json',
