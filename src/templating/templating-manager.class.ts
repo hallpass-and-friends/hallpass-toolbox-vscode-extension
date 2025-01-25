@@ -1,4 +1,6 @@
 import * as vscode from 'vscode';
+import * as fsPath from 'path';
+
 import { Configuration, TemplatingConfig } from '../configuration';
 import { isNullish, Nullable } from '../common/nullable';
 import { TemplateItem } from "./template-item.type";
@@ -84,11 +86,43 @@ export class TemplatingManager {
       );
   }
 
-  getFilesToCopy(template: TemplateItem): Promise<DirectoryListingItem[]> {
+  protected getFilesToCopy(template: TemplateItem): Promise<DirectoryListingItem[]> {
     return directoryListingDeep(this.#workspaceUri, this.#config.basePath, template.path);
   }
 
-  copyFiles(template: TemplateItem, target: string, fields: any, files: DirectoryListingItem[]) {
+  protected parseTarget(sourceBase: string, sourceFull: string, target: string, fields: any) {
+    const EXT = '.tmpl';
+    let source = sourceFull.replace(sourceBase, '');
+    if (sourceFull.endsWith(EXT)) {
+      source = source.substring(0, source.length - EXT.length);
+    }
+
+    //substitute fields values for placeholders
+    const substitute = (filename: string, id: string, value: string) => {
+      const replacements = [
+        { search: `{${id}}`, replace: value }, //normal
+        { search: `{${id.toLocaleLowerCase()}}`, replace: value.toLocaleLowerCase() }, //lowercase
+        { search: `{${id.toLocaleUpperCase()}}`, replace: value.toLocaleUpperCase() }, //uppercase
+      ];
+      replacements.forEach(m => {
+        if (filename.includes(m.search)) {
+          filename = filename.replaceAll(m.search, m.replace);
+        }
+      });
+      return filename;
+    };
+    
+    Object.keys(fields).forEach((id) => {
+      const {field, value} = fields[id];
+      if (field.id === id) {
+        source = substitute(source, id, value);
+      }
+    });
+
+    return vscode.Uri.joinPath(this.#workspaceUri, target, source).fsPath;
+  }
+
+  protected copyFiles(template: TemplateItem, target: string, fields: any, files: DirectoryListingItem[]) {
     this.#logger.log(`[Templating] Copying ...`);
     
     //be sure the target exists
@@ -101,7 +135,7 @@ export class TemplatingManager {
     const baseName = vscode.Uri.joinPath(this.#workspaceUri, this.#config.basePath, template.path).fsPath;
     files.forEach(f => {
       const _source = f.name;
-      const _target = vscode.Uri.joinPath(this.#workspaceUri, target, _source.replace(baseName, '')).fsPath;
+      const _target = this.parseTarget(baseName, _source, target, fields);
       switch(f.type) {
         case vscode.FileType.Directory: {
           const result = makeDirectory(_target);
