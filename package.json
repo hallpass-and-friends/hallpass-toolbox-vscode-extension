@@ -2,13 +2,14 @@
   "name": "toolbox",
   "displayName": "Toolbox",
   "description": "Learning VS Extensions",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.96.0"
   },
   "categories": [
     "Other"
   ],
+  "icon": "resources/hallpass-toolbox.128.color.png",
   "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
@@ -32,7 +33,7 @@
         {
           "id": "hallpass-toolbox",
           "title": "Hallpass Toolbox",
-          "icon": "resources/hallpass-toolbox.svg"
+          "icon": "resources/hallpass-toolbox.24.dark.png"
         }
       ]
     },
@@ -41,19 +42,19 @@
         {
           "id": "hallpass-welcome",
           "name": "Welcome",
-          "icon": "resources/welcome.svg"
+          "icon": "resources/welcome.dark.png"
         },
         {
           "id": "hallpassFolders",
           "name": "Folders",
-          "icon": "resources/folder.svg"
+          "icon": "resources/folder.dark.png"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "hallpass-welcome",
-        "contents": "Welcome to Hallpass Toolbox. [learn more](https://client.hallpassandfriends.com/)\n[Open Templating](command:toolbox.templating)\n[Refresh Folders](command:hallpassFolders.refresh-folders)"
+        "contents": "Welcome to Hallpass Toolbox. [learn more](https://github.com/hallpass-and-friends/hallpass-toolbox-vscode-extension)\n[Open Templating](command:toolbox.templating)\n[Refresh Folders](command:hallpassFolders.refresh-folders)"
       }
     ],
     "commands": [
@@ -69,8 +70,8 @@
         "command": "hallpassFolders.copy-path",
         "title": "Copy",
         "icon": {
-          "light": "resources/copy-light.svg",
-          "dark": "resources/copy-dark.svg"
+          "light": "resources/copy.light.png",
+          "dark": "resources/copy.dark.png"
         }
       }
     ],
