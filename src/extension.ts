@@ -4,6 +4,9 @@ import * as vscode from 'vscode';
 import { Logger } from './logger';
 import { TemplatingPanel } from './templating/templating-panel.class';
 import { FoldersProvider } from './toolbox-view/folders-provider';
+import { editor } from './common/editor';
+import { isNullish, isUndefined } from './common/nullable';
+import { surroundWith } from './surround-with/surround-with';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -17,7 +20,21 @@ export function activate(context: vscode.ExtensionContext) {
 	const foldersProvider = new FoldersProvider(context);
 	
 	context.subscriptions.push(
-		vscode.commands.registerCommand('toolbox.templating', () => {				
+		vscode.commands.registerCommand('hallpassToolbox.surround-with', async () => {
+			//todo:
+			// - get selected text
+			const result = await surroundWith();
+			if (isNullish(result)) {
+				vscode.window.showErrorMessage(`Unable to surround with HTML tag.`);
+			}
+			else {
+				vscode.window.showInformationMessage(`Surrounded with HTML tag: ${result}`);
+			}
+		})
+	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('hallpassToolbox.templating', () => {				
 			TemplatingPanel.activate(context.extensionUri);
 		})
 	);

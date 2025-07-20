@@ -33,7 +33,7 @@ This extension contributes the following settings:
 
 *January 25, 2025* - no known issues
 
-You can 
+
 
 ## Release Notes
 

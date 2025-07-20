@@ -4,7 +4,7 @@
   "description": "Development Toolbox used by Hallpass and Friends",
   "version": "0.1.0",
   "engines": {
-    "vscode": "^1.96.0"
+    "vscode": "^1.102.1"
   },
   "categories": [
     "Other"
@@ -68,7 +68,11 @@
     ],
     "commands": [
       {
-        "command": "toolbox.templating",
+        "command": "hallpassToolbox.surround-with",
+        "title": "Hallpass Surround With..."
+      },
+      {
+        "command": "hallpassToolbox.templating",
         "title": "Hallpass Templating"
       },
       {
