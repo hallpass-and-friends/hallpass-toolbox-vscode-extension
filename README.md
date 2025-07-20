@@ -6,7 +6,7 @@
 
 ## Features
 
-### Templating
+### *Templating*
 
 The Templating tool allows you to easily create a set of templates to "scaffold" your development.
 
@@ -15,7 +15,11 @@ if you are building a web project, you might want to create a template for a new
 
 We use the Templating tool to scaffold new "pages" in our NextJS projects and "views" in our Angular projects. 
 
-### Others??
+### *Surround With...*
+
+//todo: this is an experiment on how to replace text
+
+### *Others??*
 
 If you have an idea for an addition to the Toolbox, please let us know by [submitting a feature request issue](https://github.com/hallpass-and-friends/hallpass-toolbox-vscode-extension/issues).
 
@@ -24,7 +28,7 @@ If you have an idea for an addition to the Toolbox, please let us know by [submi
 
 This extension contributes the following settings:
 
-**Templating**
+### **Templating**
 
 * `hallpassToolbox.templating.basePath`: Location of the templates and configuration files. Defaults to `.vscode/hallpass/templating`.
 * `hallpassToolbox.templating.config`: Name of the json file containing the configuration. Defaults to `config.json`

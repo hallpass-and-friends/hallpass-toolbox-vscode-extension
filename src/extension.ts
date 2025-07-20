@@ -19,17 +19,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const foldersProvider = new FoldersProvider(context);
 	
+	//todo: this is an experiment
+	// inspiration was need to wrap HTML (e.g. cool => <strong>cool</strong>)
+	// but the Emmet: Wrap With Abbreviation ... command works
+	// and we can create shortcuts !  https://stackoverflow.com/a/46854557
 	context.subscriptions.push(
 		vscode.commands.registerCommand('hallpassToolbox.surround-with', async () => {
-			//todo:
-			// - get selected text
-			const result = await surroundWith();
-			if (isNullish(result)) {
-				vscode.window.showErrorMessage(`Unable to surround with HTML tag.`);
-			}
-			else {
-				vscode.window.showInformationMessage(`Surrounded with HTML tag: ${result}`);
-			}
+			await surroundWith();
 		})
 	);
 
